@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 const UserDetailsModel = require('./models/users');
 
 // app listener
-const port_number = 7777;
-const host = "127.0.0.1";
+const port_number = 3001;
+// const host = "127.0.0.1";
 
 const app = express();
 app.use(express.urlencoded({extended: true}));
@@ -16,8 +16,8 @@ mongoose
     .connect(dbURI)
     .then(response => {
         console.info("Connected to DB!");
-        app.listen(port_number, host, () => {
-            console.info(`Running on... http://${host}:${port_number}/`);
+        app.listen(port_number, () => {
+            console.info(`Running on port number... ${port_number}`);
         });
     })
     .catch(fail => console.error(fail));
@@ -27,11 +27,11 @@ mongoose
 app.get("/", (req, res) => {
     // console.info("request: ", req.query);
     // UserDetailsModel.find({ email: "tarun@gmail.com" }).then(result => res.send(result)).catch(fail => res.send(fail));
-    res.send({ key: "value" });
+    res.send({ page: "index" });
 });
 
 app.post("/post", (req, res) => {
-    console.info("body: ", req);
+    res.send({ page: "post" });
     // console.info("params: ", req.params);
     // console.info("query: ", req.query);
     /* const userDetails = new UserDetailsModel({
