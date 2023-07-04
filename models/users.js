@@ -18,6 +18,10 @@ const userDetailsSchema = new Schema({
         type: String,
         required: true,
     },
+    profileUri: {
+        type: String,
+        required: true,
+    }
 }, { timestamps: true });
 
 const UserDetailsModel = mongoose.model('UserDetailsModel', userDetailsSchema);

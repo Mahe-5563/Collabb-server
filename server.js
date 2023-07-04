@@ -1,14 +1,15 @@
 // imports
 const express = require('express');
 const mongoose = require('mongoose');
-const UserDetailsModel = require('./models/users');
+// const createAccount = require('./processes/create-account');
+const { processCreateAccount, checkUserDetailsValidity } = require('./processes/create-account');
 
 // app listener
 const port_number = 3001;
-// const host = "127.0.0.1";
 
 const app = express();
 app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 
 // Connect to mongo db
 const dbURI = `mongodb+srv://mahe:dbMahe7@cluster0.ndgc2tv.mongodb.net/db_collabb?retryWrites=true&w=majority`;
@@ -25,31 +26,17 @@ mongoose
 
 // Requests...
 app.get("/", (req, res) => {
-    // console.info("request: ", req.query);
-    // UserDetailsModel.find({ email: "tarun@gmail.com" }).then(result => res.send(result)).catch(fail => res.send(fail));
-    res.send({ page: "index" });
+    res.send({ status: "200", message: "Index page" });
 });
 
-app.post("/post", (req, res) => {
-    res.send({ page: "post" });
-    // console.info("params: ", req.params);
-    // console.info("query: ", req.query);
-    /* const userDetails = new UserDetailsModel({
-        firstName: "Maheshwar", 
-        lastName: "Arulraj",
-        email: "maheshwar12345@gmail.com",
-        password: "test123",
-    }); */
-
-    /* userDetails
-        .save()
-        .then(result => {
-            console.info(`id: ${result.id}`);
-            res.send(result);
-        })
-        .catch(fail => {
-            res.send(fail);
-        }); */
+app.post("/create-account", async (req, res) => {
+    const userDetail = req.body;
+    // console.info("userDetail: ", userDetail);
+    if(checkUserDetailsValidity(userDetail)) {
+        processCreateAccount(userDetail, res);
+    } else {
+        res.send({ message: "User exists!" });
+    }
 });
 
 app.post("/create-new-user", (req, res) => {
@@ -58,4 +45,5 @@ app.post("/create-new-user", (req, res) => {
 
 app.use((req, res) => {
     console.info("Got hit here!!");
+    res.send({ status: "404", message: "Not Found" });
 })

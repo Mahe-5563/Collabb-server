@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
-const talentAccountDetailsSchema = Schema({
+const talentAccountDetailsSchema = new Schema({
     talentid: {
         type: String,
         required: true,
@@ -35,6 +35,10 @@ const talentAccountDetailsSchema = Schema({
         required: true,
     },
     location: {
+        type: String,
+        required: true,
+    },
+    locationcode: {
         type: String,
         required: true,
     }
