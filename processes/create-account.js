@@ -34,13 +34,13 @@ exports.checkUserDetailsValidity = function (userDetail) {
  */
 exports.processCreateAccount = async function (userDetail, resp) {
   const email = userDetail.field_email;
-  console.info("Step One success");
+  // console.info("Step One success");
 
   UserDetailsModel.find({ email })
     .then((result) => {
-      console.info("result: ", result);
+      // console.info("result: ", result);
       if (result.length == 0) {
-        console.info("Step Two success");
+        // console.info("Step Two success");
         const userDetails = new UserDetailsModel({
           firstName: userDetail.field_first_name,
           lastName: userDetail.field_last_name,
@@ -53,7 +53,7 @@ exports.processCreateAccount = async function (userDetail, resp) {
           .then((result) => {
             const userId = result.id;
             const accountType = userDetail.type;
-            console.info("User Details: ", result);
+            // console.info("User Details: ", result);
 
             switch (accountType) {
               case "talent":
@@ -74,19 +74,19 @@ exports.processCreateAccount = async function (userDetail, resp) {
                 })
                   .save()
                   .then((res) => {
-                    console.info("Client Details: ", res);
-                    resp.send(res);
+                    // console.info("Client Details: ", res);
+                    resp.send({ res, message: "Account created successfully!", statuscode: 200 });
                     // res = resp;
                   })
-                  .catch((fail) => resp.send(fail));
+                  .catch((fail) => resp.send({ res: fail, message: "There's been a problem with creating the account" }));
                 break;
               default:
                 break;
             }
           })
           .catch((fail) => {
-            console.info("Step Three fail");
-            resp.send(fail);
+            // console.info("Step Three fail");
+            resp.send({ res: fail, message: "There's been a problem with creating the account" });
           });
       } else {
         resp.send({ message: "User email exists" });

@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 // const createAccount = require('./processes/create-account');
 const { processCreateAccount, checkUserDetailsValidity } = require('./processes/create-account');
+const UserDetailsModel = require("./models/users");
 
 // app listener
 const port_number = 3001;
@@ -27,6 +28,23 @@ mongoose
 // Requests...
 app.get("/", (req, res) => {
     res.send({ status: "200", message: "Index page" });
+});
+
+app.get("/get-user-by-email", (req, res) => {
+    const userDetail = req.query;
+    UserDetailsModel.findOne({ 
+        email: userDetail.field_email,
+    }).then(result => {
+        let respObj = {
+            message: !result ? "User does not exists" : "User exist",
+            bool: !result,
+            statuscode: 200,
+            res: result,
+        };
+        res.send(respObj);
+    }).catch(fail => {
+        res.send({ res: fail, message: "Something has gone wrong!" });
+    });
 });
 
 app.post("/create-account", async (req, res) => {
