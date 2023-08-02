@@ -62,7 +62,7 @@ exports.processCreateAccount = async function (userDetail, resp) {
             switch (usertype) {
               case "talent":
                 new TalentAccDetailsModel({
-                  talentid: userId,
+                  userid: userId,
                   category: userDetail.category,
                   subcategory: userDetail.sub_category,
                   location: userDetail.location.name,
@@ -84,7 +84,7 @@ exports.processCreateAccount = async function (userDetail, resp) {
                 break;
               case "client":
                 new ClientAccDetailsModel({
-                  clientid: userId,
+                  userid: userId,
                   organisationname: userDetail.organisation_name,
                   website: userDetail.website,
                   description: userDetail.description,

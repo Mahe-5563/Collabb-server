@@ -47,6 +47,22 @@ app.get("/get-user-by-email", (req, res) => {
     });
 });
 
+app.get("/get-user-by-id", (req, res) => {
+    const userDetail = req.query;
+    UserDetailsModel.findById(userDetail.id).then(result => {
+        console.info("result: ", result);
+        let respObj = {
+            message: !result ? "User does not exists" : "User exist",
+            bool: !result,
+            statuscode: result ? 200 : 404,
+            res: result,
+        };
+        res.send(respObj);
+    }).catch(fail => {
+        res.send({ res: fail, message: "Something has gone wrong!" });
+    });
+});
+
 app.post("/create-account", async (req, res) => {
     const userDetail = req.body;
     // console.info("userDetail: ", userDetail);

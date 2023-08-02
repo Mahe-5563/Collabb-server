@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
 const talentAccountDetailsSchema = new Schema({
-    talentid: {
+    userid: {
         type: String,
         required: true,
     },
