@@ -21,6 +21,10 @@ const userDetailsSchema = new Schema({
     profileUri: {
         type: String,
         required: true,
+    },
+    usertype: {
+        type: String,
+        required: true,
     }
 }, { timestamps: true });
 

@@ -34,9 +34,13 @@ exports.checkUserDetailsValidity = function (userDetail) {
  */
 exports.processCreateAccount = async function (userDetail, resp) {
   const email = userDetail.field_email;
+  const usertype = userDetail.type;
   // console.info("Step One success");
 
-  UserDetailsModel.find({ email })
+  UserDetailsModel.find({ 
+    email, 
+    usertype, 
+  })
     .then((result) => {
       // console.info("result: ", result);
       if (result.length == 0) {
@@ -47,25 +51,40 @@ exports.processCreateAccount = async function (userDetail, resp) {
           email: userDetail.field_email,
           password: userDetail.field_pwd,
           profileUri: userDetail.profile_photo.uri,
+          usertype,
         });
         userDetails
           .save()
           .then((result) => {
             const userId = result.id;
-            const accountType = userDetail.type;
             // console.info("User Details: ", result);
 
-            switch (accountType) {
+            switch (usertype) {
               case "talent":
-                const talentDetails = new TalentAccDetailsModel({
+                new TalentAccDetailsModel({
                   talentid: userId,
-                  // category: userDetail
-                });
+                  category: userDetail.category,
+                  subcategory: userDetail.sub_category,
+                  location: userDetail.location.name,
+                  locationcode: userDetail.location.code,
+                  description: userDetail.description,
+                  skills: userDetail.skills,
+                  rate: userDetail.rate,
+                  paytype: userDetail.pay_type,
+                  experience: userDetail.experience,
+                })
+                  .save()
+                  .then(res => {
+                    resp.send({ res, message: "Account created successfully!", statuscode: 200 });
+                  })
+                  .catch((fail) => {
+                    userDetails.deleteOne({ _id: userId });
+                    resp.send({ res: fail, message: "There's been a problem with creating the account" })
+                  });
                 break;
               case "client":
                 new ClientAccDetailsModel({
                   clientid: userId,
-                  accounttype: userDetail.account_type,
                   organisationname: userDetail.organisation_name,
                   website: userDetail.website,
                   description: userDetail.description,
@@ -78,7 +97,10 @@ exports.processCreateAccount = async function (userDetail, resp) {
                     resp.send({ res, message: "Account created successfully!", statuscode: 200 });
                     // res = resp;
                   })
-                  .catch((fail) => resp.send({ res: fail, message: "There's been a problem with creating the account" }));
+                  .catch((fail) => {
+                    userDetails.deleteOne({ _id: userId })
+                    resp.send({ res: fail, message: "There's been a problem with creating the account" })
+                  });
                 break;
               default:
                 break;
