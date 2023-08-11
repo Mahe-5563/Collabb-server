@@ -13,9 +13,9 @@ exports.checkJobPostAmountCriteria = function (jobpostObj) {
   return flag;
 };
 
-exports.processCreateJobPost = function (jobDetails) {
+exports.processCreateJobPost = function (jobDetails, resp) {
   const userId = jobDetails?.userId;
-  const { budget, jobDescription } = jobDetails;
+  const { budget, jobDescription, category, subcategory } = jobDetails;
 
   UserDetailsModel
     .findById(userId)
@@ -43,10 +43,19 @@ exports.processCreateJobPost = function (jobDetails) {
         jd_skills: jobDescription.skills,
         jd_experience: jobDescription.experience,
         jd_description: jobDescription.description,
+        job_category: category,
+        job_subcategory: subcategory,
       })
         .save()
         .then(res => {
-          
+          console.info("res: ", res);
+          resp.send({ message: "Post job created successfully!", status: 200, res });
+        })
+        .catch(fail => {
+          console.info("fail: ", fail);
+          resp.statusCode = 400;
+          resp.statusMessage = "Error in creating job post";
+          resp.send({ message: "Error in creating job post", status: 400, fail });
         })
     })
 };

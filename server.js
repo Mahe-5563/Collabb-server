@@ -78,7 +78,7 @@ app.post("/create-job-post", (req, res) => {
     const jobDetails = req.body;
 
     if(checkJobPostAmountCriteria(jobDetails)){
-        processCreateJobPost(jobDetails);
+        processCreateJobPost(jobDetails, res);
     } else {
         res.send({ message: "Invalid amount configured." });
     }
