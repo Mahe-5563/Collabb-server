@@ -72,6 +72,8 @@ exports.processCreateAccount = async function (userDetail, resp) {
                   rate: userDetail.rate,
                   paytype: userDetail.pay_type,
                   experience: userDetail.experience,
+                  categoryid: userDetail.category_id,
+                  subcategoryid: userDetail.sub_category_id,
                 })
                   .save()
                   .then(res => {

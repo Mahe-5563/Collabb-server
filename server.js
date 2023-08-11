@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const { processCreateAccount, checkUserDetailsValidity } = require('./processes/create-account');
 const UserDetailsModel = require("./models/users");
 const { checkJobPostAmountCriteria, processCreateJobPost } = require('./processes/post-job');
+const { getProfileDetails, getJobPosts } = require('./processes/talent_functions');
 
 // app listener
 const port_number = 3001;
@@ -31,6 +32,8 @@ app.get("/", (req, res) => {
     res.send({ status: "200", message: "Index page" });
 });
 
+
+// GET METHODS...
 app.get("/get-user-by-email", (req, res) => {
     const userDetail = req.query;
     UserDetailsModel.findOne({ 
@@ -64,6 +67,18 @@ app.get("/get-user-by-id", (req, res) => {
     });
 });
 
+app.get("/get-profile-details", (req, res) => {
+    const profileDetails = req.query;
+    getProfileDetails(profileDetails, res);
+})
+
+app.get("/get-job-posts", (req, res) => {
+    const jobCategory = req.query;
+    getJobPosts(jobCategory.category, res);
+})
+
+
+// POST METHODS...
 app.post("/create-account", async (req, res) => {
     const userDetail = req.body;
     // console.info("userDetail: ", userDetail);

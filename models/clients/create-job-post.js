@@ -19,5 +19,5 @@ const JobPostSchema = new Schema({
     job_subcategory: { type: Object, required: true },
 }, { timestamps: true });
 
-const JobPostModel = Mongoose.model("JobPostSchema", JobPostSchema);
+const JobPostModel = Mongoose.model("JobPostModel", JobPostSchema);
 module.exports = JobPostModel;

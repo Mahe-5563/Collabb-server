@@ -14,6 +14,14 @@ const talentAccountDetailsSchema = new Schema({
         type: String,
         required: true,
     },
+    categoryid: {
+        type: String,
+        required: true,
+    },
+    subcategoryid: {
+        type: String,
+        required: true,
+    },
     skills: {
         type: Array,
         required: true,
