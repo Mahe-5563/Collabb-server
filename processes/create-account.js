@@ -1,6 +1,6 @@
 const UserDetailsModel = require("../models/users");
-const TalentAccDetailsModel = require("../models/talents");
-const ClientAccDetailsModel = require("../models/clients");
+const TalentAccDetailsModel = require("../models/talents/talents");
+const ClientAccDetailsModel = require("../models/clients/clients");
 
 /**
  * Function to check the validity of the user detail object
@@ -83,24 +83,30 @@ exports.processCreateAccount = async function (userDetail, resp) {
                   });
                 break;
               case "client":
-                new ClientAccDetailsModel({
-                  userid: userId,
-                  organisationname: userDetail.organisation_name,
-                  website: userDetail.website,
-                  description: userDetail.description,
-                  location: userDetail.location.name,
-                  locationcode: userDetail.location.code,
-                })
-                  .save()
-                  .then((res) => {
-                    // console.info("Client Details: ", res);
-                    resp.send({ res, message: "Account created successfully!", statuscode: 200 });
-                    // res = resp;
+                if((userDetail?.account_type?.toLowerCase() == "personal") || (userDetail?.account_type?.toLowerCase() == "organisation" && userDetail.organisation_name)) {
+                  new ClientAccDetailsModel({
+                    userid: userId,
+                    accounttype: userDetail.account_type,
+                    organisationname: userDetail.organisation_name,
+                    website: userDetail.website,
+                    description: userDetail.description,
+                    location: userDetail.location.name,
+                    locationcode: userDetail.location.code,
                   })
-                  .catch((fail) => {
-                    userDetails.deleteOne({ _id: userId })
-                    resp.send({ res: fail, message: "There's been a problem with creating the account" })
-                  });
+                    .save()
+                    .then((res) => {
+                      // console.info("Client Details: ", res);
+                      resp.send({ res, message: "Account created successfully!", statuscode: 200 });
+                      // res = resp;
+                    })
+                    .catch((fail) => {
+                      userDetails.deleteOne({ _id: userId })
+                      resp.send({ res: fail, message: "There's been a problem with creating the account" })
+                    });
+                } else { 
+                  userDetails.deleteOne({ _id: userId })
+                  resp.send({ message: "Please check your account type and organisation name." })
+                }
                 break;
               default:
                 break;

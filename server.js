@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 // const createAccount = require('./processes/create-account');
 const { processCreateAccount, checkUserDetailsValidity } = require('./processes/create-account');
 const UserDetailsModel = require("./models/users");
+const { checkJobPostAmountCriteria, processCreateJobPost } = require('./processes/post-job');
 
 // app listener
 const port_number = 3001;
@@ -69,12 +70,18 @@ app.post("/create-account", async (req, res) => {
     if(checkUserDetailsValidity(userDetail)) {
         processCreateAccount(userDetail, res);
     } else {
-        res.send({ message: "User exists!" });
+        res.send({ message: "Invalid user." });
     }
 });
 
-app.post("/create-new-user", (req, res) => {
-    // console.info()
+app.post("/create-job-post", (req, res) => {
+    const jobDetails = req.body;
+
+    if(checkJobPostAmountCriteria(jobDetails)){
+        processCreateJobPost(jobDetails);
+    } else {
+        res.send({ message: "Invalid amount configured." });
+    }
 })
 
 app.use((req, res) => {
