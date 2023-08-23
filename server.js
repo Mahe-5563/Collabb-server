@@ -6,6 +6,7 @@ const { processCreateAccount, checkUserDetailsValidity } = require('./processes/
 const UserDetailsModel = require("./models/users");
 const { checkJobPostAmountCriteria, processCreateJobPost } = require('./processes/post-job');
 const { getProfileDetails, getJobPosts } = require('./processes/talent_functions');
+const JobPostModel = require('./models/clients/create-job-post');
 
 // app listener
 const port_number = 3001;
@@ -96,6 +97,38 @@ app.post("/create-job-post", (req, res) => {
         processCreateJobPost(jobDetails, res);
     } else {
         res.send({ message: "Invalid amount configured." });
+    }
+})
+
+// PATCH METHODS...
+app.patch("/update-job-post", async (req, res) => {
+    const jobPostUpdateDetails = req.body;
+    const jobPostId = req.query.id;
+
+    if(jobPostId && jobPostUpdateDetails.key && jobPostUpdateDetails.value) {
+        JobPostModel
+            .findById(jobPostId)
+            .then(resp => {
+                // console.info(resp)
+                if(!resp.applicants.includes(jobPostUpdateDetails.value)) {
+                    JobPostModel
+                        .updateOne(
+                            { _id: jobPostId }, 
+                            { $push: { [jobPostUpdateDetails.key]: jobPostUpdateDetails.value } }
+                        )
+                        .then(respo => {
+                            res.statusCode = 200;
+                            res.send({ res: respo, message: `${jobPostUpdateDetails.key} updated successfully!` });
+                        })
+                        .catch(fail => {
+                            res.statusCode = 404;
+                            res.send({ res: fail, message: `${jobPostUpdateDetails.key} failed to update!` });
+                        }) 
+                } else {
+                    res.statusCode = 400;
+                    res.send({ message: "User has already applied to this job" });
+                }
+            })
     }
 })
 
