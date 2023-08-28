@@ -129,6 +129,10 @@ app.patch("/update-job-post", async (req, res) => {
                     res.send({ message: "User has already applied to this job" });
                 }
             })
+            .catch(resp => {
+                res.statusCode = 400;
+                res.send({ message: "Cannot find the job post" });
+            })
     }
 })
 
