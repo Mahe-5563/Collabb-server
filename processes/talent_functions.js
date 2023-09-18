@@ -60,7 +60,7 @@ exports.getJobPosts = function (job_category, resp) {
         .find({ 'job_category.label': job_category })
         .then(res => {
 
-            /* res.map(async (jobDetail) => {
+            res.map(async (jobDetail) => {
                 const userid = jobDetail.userid;
                 UserDetailsModel
                     .findById(userid)
@@ -87,12 +87,7 @@ exports.getJobPosts = function (job_category, resp) {
                         status: 200,
                     });
                 }
-            }, 200); */
-            resp.send({ 
-                message:  "Fetched job details successfully",
-                res,
-                status: 200,
-            });
+            }, 200);
         })
         .catch(res => 
             resp.send({ 
