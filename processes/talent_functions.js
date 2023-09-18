@@ -55,14 +55,40 @@ exports.getProfileDetails = function (profileDetails, resp) {
 }
 
 exports.getJobPosts = function (job_category, resp) {
+    let fullObj = [];
     JobPostModel
         .find({ 'job_category.label': job_category })
-        .then(res => 
-            resp.send({ 
-                message:  "Fetched job details successfully",
-                res,
-                status: 200,
-            }))
+        .then(res => {
+
+            res.map(async (jobDetail) => {
+                const userid = jobDetail.userid;
+                UserDetailsModel
+                    .findById(userid)
+                    .then(userDetail => {
+                        fullObj.push({
+                            jobDetail,
+                            userDetail
+                        })
+                    })
+                    .catch(fail => {
+                        resp.send({ 
+                            message:  "Failed to fetch user details",
+                            res: fail,
+                            status: 400,
+                        })            
+                    });
+            })
+
+            setTimeout(() => {
+                if(fullObj) {
+                    resp.send({ 
+                        message:  "Fetched job details successfully",
+                        fullObj,
+                        status: 200,
+                    });
+                }
+            }, 200);
+        })
         .catch(res => 
             resp.send({ 
                 message:  "Failed to fetch job details",
