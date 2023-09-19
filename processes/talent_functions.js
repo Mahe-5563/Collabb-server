@@ -96,3 +96,22 @@ exports.getJobPosts = function (job_category, resp) {
                 status: 400,
             }))
 }
+
+exports.getTalentApplications = function (userid, resp) {
+    JobPostModel
+    .find({ applicants: userid })
+    .then(res => {
+        resp.send({
+            message:  "Fetched talent applications successfully",
+            res,
+            status: 200,
+        })
+    })
+    .catch(res => {
+        resp.send({
+            message:  "Failed to fetch job details",
+            res,
+            status: 400,
+        })
+    })
+}

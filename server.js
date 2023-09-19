@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const { processCreateAccount, checkUserDetailsValidity } = require('./processes/create-account');
 const UserDetailsModel = require("./models/users");
 const { checkJobPostAmountCriteria, processCreateJobPost } = require('./processes/post-job');
-const { getProfileDetails, getJobPosts } = require('./processes/talent_functions');
+const { getProfileDetails, getJobPosts, getTalentApplications } = require('./processes/talent_functions');
 const JobPostModel = require('./models/clients/create-job-post');
 
 // app listener
@@ -76,6 +76,11 @@ app.get("/get-profile-details", (req, res) => {
 app.get("/get-job-posts", (req, res) => {
     const jobCategory = req.query;
     getJobPosts(jobCategory.category, res);
+})
+
+app.get("/get-talent-applications", (req, res) => {
+    const userid = req.query.userid;
+    getTalentApplications(userid, res);
 })
 
 
