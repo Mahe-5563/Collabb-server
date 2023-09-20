@@ -1,17 +1,20 @@
 // imports
 const express = require('express');
 const mongoose = require('mongoose');
-// const createAccount = require('./processes/create-account');
+const multer = require('multer');
+
 const { processCreateAccount, checkUserDetailsValidity } = require('./processes/create-account');
 const UserDetailsModel = require("./models/users");
 const { checkJobPostAmountCriteria, processCreateJobPost } = require('./processes/post-job');
 const { getProfileDetails, getJobPosts, getTalentApplications } = require('./processes/talent_functions');
 const JobPostModel = require('./models/clients/create-job-post');
+const { getClientJobPosts } = require('./processes/client_functions');
 
 // app listener
 const port_number = 3001;
 
 const app = express();
+const upload = multer();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
@@ -81,6 +84,11 @@ app.get("/get-job-posts", (req, res) => {
 app.get("/get-talent-applications", (req, res) => {
     const userid = req.query.userid;
     getTalentApplications(userid, res);
+})
+
+app.get("/get-client-job-posts", (req, res) => {
+    const userid = req.query.userid;
+    getClientJobPosts(userid, res);
 })
 
 

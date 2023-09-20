@@ -58,6 +58,7 @@ exports.getJobPosts = function (job_category, resp) {
     let fullObj = [];
     JobPostModel
         .find({ 'job_category.label': job_category })
+        .sort({ "createdAt": "ascending" })
         .then(res => {
 
             res.map(async (jobDetail) => {
