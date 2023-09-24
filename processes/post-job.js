@@ -4,8 +4,8 @@ const JobPostModel = require("../models/clients/create-job-post");
 exports.checkJobPostAmountCriteria = function (jobpostObj) {
   let flag = false;
   if(
-    (jobpostObj.budget.paymentType.toLowerCase() == "per hour" && jobpostObj.budget.minAmt && jobpostObj.budget.maxAmt) ||
-    (jobpostObj.budget.paymentType.toLowerCase() == "project" && jobpostObj.budget.amount)
+    (jobpostObj.budget.budget_paytype.toLowerCase() == "per hour" && jobpostObj.budget.budget_minamt && jobpostObj.budget.budget_maxamt) ||
+    (jobpostObj.budget.budget_paytype.toLowerCase() == "project" && jobpostObj.budget.budget_amount)
   ) {
     flag = true;
   }
@@ -23,26 +23,26 @@ exports.processCreateJobPost = function (jobDetails, resp) {
       console.info("res: ", res);
       new JobPostModel({
         userid: userId,
-        budget_paytype: budget.paymentType,
+        budget_paytype: budget.budget_paytype,
         budget_amount: 
-          budget.paymentType.toLowerCase() == "project" 
-            ? budget.amount 
+          budget.budget_paytype.toLowerCase() == "project" 
+            ? budget.budget_amount 
             : undefined,
         budget_maxamt: 
-          budget.paymentType.toLowerCase() == "per hour" 
-            ? budget.maxAmt 
+          budget.budget_paytype.toLowerCase() == "per hour" 
+            ? budget.budget_maxamt 
             : undefined,
         budget_minamt:
-          budget.paymentType.toLowerCase() == "per hour"
-            ? budget.minAmt
+          budget.budget_paytype.toLowerCase() == "per hour"
+            ? budget.budget_minamt
             : undefined,
-        budget_restraints: budget.restraints,
-        jd_jobtitle: jobDescription.jobTitle,
-        jd_startdate: jobDescription.startDate,
-        jd_enddate: jobDescription.endDate,
-        jd_skills: jobDescription.skills,
-        jd_experience: jobDescription.experience,
-        jd_description: jobDescription.description,
+        budget_restraints: budget.budget_restraints,
+        jd_jobtitle: jobDescription.jd_jobtitle,
+        jd_startdate: jobDescription.jd_startdate,
+        jd_enddate: jobDescription.jd_enddate,
+        jd_skills: jobDescription.jd_skills,
+        jd_experience: jobDescription.jd_experience,
+        jd_description: jobDescription.jd_description,
         job_category: category,
         job_subcategory: subcategory,
         applicants: [],
