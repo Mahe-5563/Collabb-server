@@ -91,18 +91,6 @@ app.get("/get-client-job-posts", (req, res) => {
     getClientJobPosts(userid, res);
 })
 
-app.get("/get-all-users", async (req, res) => {
-    const users = req.body.applicants;
-    if(users.length > 0) {
-        await getListOfAllUsersDetails(users, res)
-    } else {
-        res.send({
-            message: "Users array is empty",
-            status: 404,
-        })
-    }
-})
-
 
 // POST METHODS...
 app.post("/create-account", async (req, res) => {
@@ -122,6 +110,18 @@ app.post("/create-job-post", (req, res) => {
         processCreateJobPost(jobDetails, res);
     } else {
         res.send({ message: "Invalid amount configured." });
+    }
+})
+
+app.post("/get-all-users", async (req, res) => {
+    const users = req.body.applicants;
+    if(users.length > 0) {
+        await getListOfAllUsersDetails(users, res)
+    } else {
+        res.send({
+            message: "Users array is empty",
+            status: 404,
+        })
     }
 })
 
