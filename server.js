@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const multer = require('multer');
 
-const { processCreateAccount, checkUserDetailsValidity } = require('./processes/create-account');
+const { processCreateAccount, checkUserDetailsValidity, getListOfAllUsersDetails } = require('./processes/create-account');
 const UserDetailsModel = require("./models/users");
 const { checkJobPostAmountCriteria, processCreateJobPost } = require('./processes/post-job');
 const { getProfileDetails, getJobPosts, getTalentApplications } = require('./processes/talent_functions');
@@ -89,6 +89,18 @@ app.get("/get-talent-applications", (req, res) => {
 app.get("/get-client-job-posts", (req, res) => {
     const userid = req.query.userid;
     getClientJobPosts(userid, res);
+})
+
+app.get("/get-all-users", async (req, res) => {
+    const users = req.body.applicants;
+    if(users.length > 0) {
+        await getListOfAllUsersDetails(users, res)
+    } else {
+        res.send({
+            message: "Users array is empty",
+            status: 404,
+        })
+    }
 })
 
 

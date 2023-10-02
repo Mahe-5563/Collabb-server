@@ -124,3 +124,37 @@ exports.processCreateAccount = async function (userDetail, resp) {
     })
     .catch((fail) => resp.send(fail));
 };
+
+
+/**
+ * 
+ * @param {Array} applicants - return the details of all the users requested.
+ * @param {*} resp 
+ */
+exports.getListOfAllUsersDetails = async function (applicants, resp) {
+  let userArr = [];
+  for (const applicantid of applicants) {
+    const userDetail = await UserDetailsModel.findById(applicantid);
+    let profileDetail;
+    if(userDetail.usertype == "talent")
+      profileDetail= await TalentAccDetailsModel.findOne({ userid: applicantid });
+    if(userDetail.usertype == "client")
+      profileDetail= await ClientAccDetailsModel.findOne({ userid: applicantid });
+
+    userArr.push({ [applicantid]: { userDetail, profileDetail } });
+  }
+  
+  if(userArr.length > 0) {
+    resp.send({
+      message: "Details fetched successfully!",
+      res: userArr,
+      status: 200,
+    });
+  } else {
+    resp.send({
+      message: "Cannot fetch details",
+      res: userArr,
+      status: 400,
+    });
+  }
+}
