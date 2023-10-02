@@ -1,167 +1,271 @@
 // imports
-const express = require('express');
-const mongoose = require('mongoose');
-const multer = require('multer');
+const express = require("express");
+const mongoose = require("mongoose");
+const multer = require("multer");
 
-const { processCreateAccount, checkUserDetailsValidity, getListOfAllUsersDetails } = require('./processes/create-account');
+const {
+  processCreateAccount,
+  checkUserDetailsValidity,
+  getListOfAllUsersDetails,
+} = require("./processes/create-account");
 const UserDetailsModel = require("./models/users");
-const { checkJobPostAmountCriteria, processCreateJobPost } = require('./processes/post-job');
-const { getProfileDetails, getJobPosts, getTalentApplications } = require('./processes/talent_functions');
-const JobPostModel = require('./models/clients/create-job-post');
-const { getClientJobPosts } = require('./processes/client_functions');
+const {
+  checkJobPostAmountCriteria,
+  processCreateJobPost,
+} = require("./processes/post-job");
+const {
+  getProfileDetails,
+  getJobPosts,
+  getTalentApplications,
+} = require("./processes/talent_functions");
+const JobPostModel = require("./models/clients/create-job-post");
+const { getClientJobPosts } = require("./processes/client_functions");
 
 // app listener
 const port_number = 3001;
 
 const app = express();
 const upload = multer();
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Connect to mongo db
 const dbURI = `mongodb+srv://mahe:dbMahe7@cluster0.ndgc2tv.mongodb.net/db_collabb?retryWrites=true&w=majority`;
 mongoose
-    .connect(dbURI)
-    .then(response => {
-        console.info("Connected to DB!");
-        app.listen(port_number, () => {
-            console.info(`Running on port number... ${port_number}`);
-        });
-    })
-    .catch(fail => console.error(fail));
-
+  .connect(dbURI)
+  .then((response) => {
+    console.info("Connected to DB!");
+    app.listen(port_number, () => {
+      console.info(`Running on port number... ${port_number}`);
+    });
+  })
+  .catch((fail) => console.error(fail));
 
 // Requests...
 app.get("/", (req, res) => {
-    res.send({ status: "200", message: "Index page" });
+  res.send({ status: "200", message: "Index page" });
 });
-
 
 // GET METHODS...
 app.get("/get-user-by-email", (req, res) => {
-    const userDetail = req.query;
-    UserDetailsModel.findOne({ 
-        email: userDetail.field_email,
-    }).then(result => {
-        let respObj = {
-            message: !result ? "User does not exists" : "User exist",
-            bool: !result,
-            statuscode: 200,
-            res: result,
-        };
-        res.send(respObj);
-    }).catch(fail => {
-        res.send({ res: fail, message: "Something has gone wrong!" });
+  const userDetail = req.query;
+  UserDetailsModel.findOne({
+    email: userDetail.field_email,
+  })
+    .then((result) => {
+      let respObj = {
+        message: !result ? "User does not exists" : "User exist",
+        bool: !result,
+        statuscode: 200,
+        res: result,
+      };
+      res.send(respObj);
+    })
+    .catch((fail) => {
+      res.send({ res: fail, message: "Something has gone wrong!" });
     });
 });
 
 app.get("/get-user-by-id", (req, res) => {
-    const userDetail = req.query;
-    UserDetailsModel.findById(userDetail.id).then(result => {
-        console.info("result: ", result);
-        let respObj = {
-            message: !result ? "User does not exists" : "User exist",
-            bool: !result,
-            statuscode: result ? 200 : 404,
-            res: result,
-        };
-        res.send(respObj);
-    }).catch(fail => {
-        res.send({ res: fail, message: "Something has gone wrong!" });
+  const userDetail = req.query;
+  UserDetailsModel.findById(userDetail.id)
+    .then((result) => {
+      console.info("result: ", result);
+      let respObj = {
+        message: !result ? "User does not exists" : "User exist",
+        bool: !result,
+        statuscode: result ? 200 : 404,
+        res: result,
+      };
+      res.send(respObj);
+    })
+    .catch((fail) => {
+      res.send({ res: fail, message: "Something has gone wrong!" });
     });
 });
 
 app.get("/get-profile-details", (req, res) => {
-    const profileDetails = req.query;
-    getProfileDetails(profileDetails, res);
-})
+  const profileDetails = req.query;
+  getProfileDetails(profileDetails, res);
+});
 
 app.get("/get-job-posts", (req, res) => {
-    const jobCategory = req.query;
-    getJobPosts(jobCategory.category, res);
-})
+  const jobCategory = req.query;
+  getJobPosts(jobCategory.category, res);
+});
 
 app.get("/get-talent-applications", (req, res) => {
-    const userid = req.query.userid;
-    getTalentApplications(userid, res);
-})
+  const userid = req.query.userid;
+  getTalentApplications(userid, res);
+});
 
 app.get("/get-client-job-posts", (req, res) => {
-    const userid = req.query.userid;
-    getClientJobPosts(userid, res);
-})
-
+  const userid = req.query.userid;
+  getClientJobPosts(userid, res);
+});
 
 // POST METHODS...
 app.post("/create-account", async (req, res) => {
-    const userDetail = req.body;
-    // console.info("userDetail: ", userDetail);
-    if(checkUserDetailsValidity(userDetail)) {
-        processCreateAccount(userDetail, res);
-    } else {
-        res.send({ message: "Invalid user." });
-    }
+  const userDetail = req.body;
+  // console.info("userDetail: ", userDetail);
+  if (checkUserDetailsValidity(userDetail)) {
+    processCreateAccount(userDetail, res);
+  } else {
+    res.send({ message: "Invalid user." });
+  }
 });
 
 app.post("/create-job-post", (req, res) => {
-    const jobDetails = req.body;
+  const jobDetails = req.body;
 
-    if(checkJobPostAmountCriteria(jobDetails)){
-        processCreateJobPost(jobDetails, res);
-    } else {
-        res.send({ message: "Invalid amount configured." });
-    }
-})
+  if (checkJobPostAmountCriteria(jobDetails)) {
+    processCreateJobPost(jobDetails, res);
+  } else {
+    res.send({ message: "Invalid amount configured." });
+  }
+});
 
 app.post("/get-all-users", async (req, res) => {
-    const users = req.body.applicants;
-    if(users.length > 0) {
-        await getListOfAllUsersDetails(users, res)
-    } else {
-        res.send({
-            message: "Users array is empty",
-            status: 404,
-        })
-    }
-})
+  const users = req.body.applicants;
+  if (users.length > 0) {
+    await getListOfAllUsersDetails(users, res);
+  } else {
+    res.send({
+      message: "Users array is empty",
+      status: 404,
+    });
+  }
+});
 
 // PATCH METHODS...
 app.patch("/update-job-post", async (req, res) => {
-    const jobPostUpdateDetails = req.body;
-    const jobPostId = req.query.id;
+  const jobPostUpdateDetails = req.body;
+  const jobPostId = req.query.id;
 
-    if(jobPostId && jobPostUpdateDetails.key && jobPostUpdateDetails.value) {
-        JobPostModel
-            .findById(jobPostId)
-            .then(resp => {
-                // console.info(resp)
-                if(!resp.applicants.includes(jobPostUpdateDetails.value)) {
-                    JobPostModel
-                        .updateOne(
-                            { _id: jobPostId }, 
-                            { $push: { [jobPostUpdateDetails.key]: jobPostUpdateDetails.value } }
-                        )
-                        .then(respo => {
-                            res.statusCode = 200;
-                            res.send({ res: respo, message: `${jobPostUpdateDetails.key} updated successfully!` });
-                        })
-                        .catch(fail => {
-                            res.statusCode = 404;
-                            res.send({ res: fail, message: `${jobPostUpdateDetails.key} failed to update!` });
-                        }) 
-                } else {
-                    res.statusCode = 400;
-                    res.send({ message: "User has already applied to this job" });
-                }
+  if (jobPostId && jobPostUpdateDetails.key && jobPostUpdateDetails.value) {
+    JobPostModel.findById(jobPostId)
+      .then((resp) => {
+        // console.info(resp)
+        if (!resp.applicants.includes(jobPostUpdateDetails.value)) {
+          JobPostModel.updateOne(
+            { _id: jobPostId },
+            {
+              $push: { [jobPostUpdateDetails.key]: jobPostUpdateDetails.value },
+            }
+          )
+            .then((respo) => {
+              res.statusCode = 200;
+              res.send({
+                res: respo,
+                message: `${jobPostUpdateDetails.key} updated successfully!`,
+              });
             })
-            .catch(resp => {
-                res.statusCode = 400;
-                res.send({ message: "Cannot find the job post" });
+            .catch((fail) => {
+              res.statusCode = 404;
+              res.send({
+                res: fail,
+                message: `${jobPostUpdateDetails.key} failed to update!`,
+              });
+            });
+        } else {
+          res.statusCode = 400;
+          res.send({ message: "User has already applied to this job" });
+        }
+      })
+      .catch((resp) => {
+        res.statusCode = 400;
+        res.send({ message: "Cannot find the job post" });
+      });
+  }
+});
+
+app.patch("/apply-for-job", async (req, res) => {
+  const jobPostUpdateDetails = req.body;
+  const jobPostId = req.query.id;
+
+  if (jobPostId && jobPostUpdateDetails.applicant) {
+    JobPostModel.findById(jobPostId)
+      .then((resp) => {
+        // !resp.applicants.includes(jobPostUpdateDetails.applicant)
+        if (
+          resp.applicants?.filter(
+            (applicant) => applicant?.userid == jobPostUpdateDetails?.applicant
+          ).length == 0
+        ) {
+          JobPostModel.updateOne(
+            { _id: jobPostId },
+            {
+              $push: {
+                applicants: {
+                  userid: jobPostUpdateDetails.applicant,
+                  status: "Pending",
+                  dateOfAppl: +new Date(),
+                  lastUpdated: +new Date(),
+                },
+              },
+            }
+          )
+            .then((respo) => {
+              res.statusCode = 200;
+              res.send({
+                res: respo,
+                message: `${jobPostUpdateDetails.applicant} updated successfully!`,
+              });
             })
-    }
-})
+            .catch((fail) => {
+              res.statusCode = 404;
+              res.send({
+                res: fail,
+                message: `${jobPostUpdateDetails.applicant} failed to update!`,
+              });
+            });
+        } else {
+          res.statusCode = 400;
+          res.send({ message: "User has already applied to this job" });
+        }
+      })
+      .catch((resp) => {
+        res.statusCode = 400;
+        res.send({ message: "Cannot find the job post" });
+      });
+  }
+});
+
+app.patch("/update-job-status", async (req, res) => {
+  const jobStatus = req.body.status;
+  const jobApplicantId = req.body.applicant;
+  const jobPostId = req.query.id;
+
+  if (jobPostId && jobStatus) {
+    JobPostModel.findById(jobPostId)
+      .then((resp) => {
+        JobPostModel.updateOne(
+          { _id: jobPostId, "applicants.userid": jobApplicantId },
+          { $set: { "applicants.$.status": jobStatus, "applicants.$.lastUpdated": +new Date() } }
+        )
+          .then((respo) => {
+            res.statusCode = 200;
+            res.send({
+              res: respo,
+              message: `Status updated successfully!`,
+            });
+          })
+          .catch((fail) => {
+            res.statusCode = 400;
+            res.send({
+              res: fail,
+              message: `Failed to update!`,
+            });
+          });
+      })
+      .catch((resp) => {
+        res.statusCode = 400;
+        res.send({ message: "Cannot find the job post" });
+      });
+  }
+});
 
 app.use((req, res) => {
-    console.info("Got hit here!!");
-    res.send({ status: "404", message: "Not Found" });
-})
+  console.info("Got hit here!!");
+  res.send({ status: "404", message: "Not Found" });
+});
