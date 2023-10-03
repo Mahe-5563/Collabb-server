@@ -100,7 +100,7 @@ exports.getJobPosts = function (job_category, resp) {
 
 exports.getTalentApplications = function (userid, resp) {
     JobPostModel
-    .find({ applicants: userid })
+    .find({ "applicants.userid": userid })
     .then(res => {
         resp.send({
             message:  "Fetched talent applications successfully",
