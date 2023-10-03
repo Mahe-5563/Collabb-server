@@ -77,7 +77,14 @@ exports.processCreateAccount = async function (userDetail, resp) {
                 })
                   .save()
                   .then(res => {
-                    resp.send({ res, message: "Account created successfully!", statuscode: 200 });
+                    resp.send({ 
+                      res: {
+                        userDetail: result,
+                        accountDetail: res,
+                      }, 
+                      message: "Account created successfully!", 
+                      statuscode: 200 
+                    });
                   })
                   .catch((fail) => {
                     userDetails.deleteOne({ _id: userId });
@@ -97,9 +104,14 @@ exports.processCreateAccount = async function (userDetail, resp) {
                   })
                     .save()
                     .then((res) => {
-                      // console.info("Client Details: ", res);
-                      resp.send({ res, message: "Account created successfully!", statuscode: 200 });
-                      // res = resp;
+                      resp.send({ 
+                        res: {
+                          userDetail: result,
+                          accountDetail: res,
+                        }, 
+                        message: "Account created successfully!", 
+                        statuscode: 200 
+                      });
                     })
                     .catch((fail) => {
                       userDetails.deleteOne({ _id: userId })
