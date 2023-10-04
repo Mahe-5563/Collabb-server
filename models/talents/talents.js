@@ -49,6 +49,14 @@ const talentAccountDetailsSchema = new Schema({
     locationcode: {
         type: String,
         required: true,
+    },
+    workstatus: {
+        type: String,
+        required: true,
+    },
+    followers: {
+        type: Array,
+        required: true,
     }
 }, { timestamps: true });
 

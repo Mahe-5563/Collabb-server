@@ -74,6 +74,8 @@ exports.processCreateAccount = async function (userDetail, resp) {
                   experience: userDetail.experience,
                   categoryid: userDetail.category_id,
                   subcategoryid: userDetail.sub_category_id,
+                  workstatus: "available", // busy, vacay
+                  followers: [],
                 })
                   .save()
                   .then(res => {
@@ -101,6 +103,7 @@ exports.processCreateAccount = async function (userDetail, resp) {
                     description: userDetail.description,
                     location: userDetail.location.name,
                     locationcode: userDetail.location.code,
+                    favourites: [],
                   })
                     .save()
                     .then((res) => {

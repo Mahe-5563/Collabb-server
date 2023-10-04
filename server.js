@@ -20,6 +20,8 @@ const {
 } = require("./processes/talent_functions");
 const JobPostModel = require("./models/clients/create-job-post");
 const { getClientJobPosts } = require("./processes/client_functions");
+const TalentAccDetailsModel = require("./models/talents/talents");
+const ClientAccDetailsModel = require("./models/clients/clients");
 
 // app listener
 const port_number = 3001;
@@ -264,6 +266,66 @@ app.patch("/update-job-status", async (req, res) => {
       });
   }
 });
+
+app.patch("/update-current-status", async (req, res) => {
+    const currentStatus = req.body.status;
+    const currentUser = req.query.id; // talent id
+
+    TalentAccDetailsModel
+        .updateOne({ userid: currentUser }, { $set: { workstatus: currentStatus } })
+        .then(resp => {
+            res.statusCode = 200;
+            res.send({
+                resp
+            });
+        })
+        .catch(fail => {
+            res.statusCode = 400;
+            res.send({
+                resp: fail
+            });
+        });
+})
+
+app.patch("/update-followers", async (req, res) => {
+    const followerId = req.body.followerid; // client id
+    const currentUser = req.query.id; // talent id
+
+    TalentAccDetailsModel
+        .findOneAndUpdate({ userid: currentUser }, { $addToSet: { followers: followerId } })
+        .then(resp => {
+            res.statusCode = 200;
+            res.send({
+                resp
+            });
+        })
+        .catch(fail => {
+            res.statusCode = 400;
+            res.send({
+                resp: fail
+            });
+        })
+})
+
+app.patch("/update-favourites", async (req, res) => {
+    const favouriteId = req.body.favouriteid; // talent id
+    const currentUser = req.query.id; // client id
+
+    ClientAccDetailsModel
+        .findOneAndUpdate({ userid: currentUser }, { $addToSet: { favourites: favouriteId } })
+        .then(resp => {
+            res.statusCode = 200;
+            res.send({
+                resp
+            });
+        })
+        .catch(fail => {
+            res.statusCode = 400;
+            res.send({
+                resp: fail
+            });
+        })
+})
 
 app.use((req, res) => {
   console.info("Got hit here!!");

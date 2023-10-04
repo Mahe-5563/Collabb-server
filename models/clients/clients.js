@@ -28,6 +28,10 @@ const clientAccountDetailsSchema = new Schema({
         type: String,
         required: true,
     },
+    favourites: {
+        type: Array,
+        required: true,
+    }
 }, { timestamps: true });
 
 const ClientAccDetailsModel = mongoose.model('ClientAccDetailsModel', clientAccountDetailsSchema);
