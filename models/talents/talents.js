@@ -54,7 +54,7 @@ const talentAccountDetailsSchema = new Schema({
         type: String,
         required: true,
     },
-    followers: {
+    myjobs: {
         type: Array,
         required: true,
     }

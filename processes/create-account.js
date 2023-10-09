@@ -75,7 +75,7 @@ exports.processCreateAccount = async function (userDetail, resp) {
                   categoryid: userDetail.category_id,
                   subcategoryid: userDetail.sub_category_id,
                   workstatus: "available", // busy, vacay
-                  followers: [],
+                  myjobs: [],
                 })
                   .save()
                   .then(res => {

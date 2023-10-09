@@ -208,11 +208,32 @@ app.patch("/apply-for-job", async (req, res) => {
             }
           )
             .then((respo) => {
-              res.statusCode = 200;
-              res.send({
-                res: respo,
-                message: `${jobPostUpdateDetails.applicant} updated successfully!`,
-              });
+
+                TalentAccDetailsModel.updateOne(
+                    { userid: jobPostUpdateDetails.applicant },
+                    {
+                        $push: {
+                            myjobs: {
+                                jobid: jobPostId,
+                                status: "Pending",
+                                dateOfAppl: +new Date(),
+                                lastUpdated: +new Date(),
+                            }
+                        }
+                    }
+                ).then(() => {
+                    res.statusCode = 200;
+                    res.send({
+                        res: respo,
+                        message: `${jobPostUpdateDetails.applicant} updated successfully!`,
+                    });
+                }).catch(err => {
+                    res.statusCode = 404;
+                    res.send({
+                        res: fail,
+                        message: `Failed to update talent model!`,
+                    });
+                })
             })
             .catch((fail) => {
               res.statusCode = 404;
@@ -243,9 +264,23 @@ app.patch("/update-job-status", async (req, res) => {
       .then((resp) => {
         JobPostModel.updateOne(
           { _id: jobPostId, "applicants.userid": jobApplicantId },
-          { $set: { "applicants.$.status": jobStatus, "applicants.$.lastUpdated": +new Date() } }
+          {
+            $set: {
+              "applicants.$.status": jobStatus,
+              "applicants.$.lastUpdated": +new Date(),
+            },
+          }
         )
           .then((respo) => {
+            TalentAccDetailsModel.updateOne(
+                { userid: jobApplicantId, "myjobs.jobid": jobPostId },
+                {
+                    $set: {
+                        "myjobs.$.status": jobStatus,
+                        "myjobs.$.lastUpdated": +new Date(),
+                    }
+                }
+            )
             res.statusCode = 200;
             res.send({
               res: respo,
@@ -268,64 +303,70 @@ app.patch("/update-job-status", async (req, res) => {
 });
 
 app.patch("/update-current-status", async (req, res) => {
-    const currentStatus = req.body.status;
-    const currentUser = req.query.id; // talent id
+  const currentStatus = req.body.status;
+  const currentUser = req.query.id; // talent id
 
-    TalentAccDetailsModel
-        .updateOne({ userid: currentUser }, { $set: { workstatus: currentStatus } })
-        .then(resp => {
-            res.statusCode = 200;
-            res.send({
-                resp
-            });
-        })
-        .catch(fail => {
-            res.statusCode = 400;
-            res.send({
-                resp: fail
-            });
-        });
-})
+  TalentAccDetailsModel.updateOne(
+    { userid: currentUser },
+    { $set: { workstatus: currentStatus } }
+  )
+    .then((resp) => {
+      res.statusCode = 200;
+      res.send({
+        resp,
+      });
+    })
+    .catch((fail) => {
+      res.statusCode = 400;
+      res.send({
+        resp: fail,
+      });
+    });
+});
 
 app.patch("/update-followers", async (req, res) => {
-    const followerId = req.body.followerid; // client id
-    const currentUser = req.query.id; // talent id
+  const followerId = req.body.followerid; // client id
+  const currentUser = req.query.id; // talent id
 
-    TalentAccDetailsModel
-        .findOneAndUpdate({ userid: currentUser }, { $addToSet: { followers: followerId } })
-        .then(resp => {
-            res.statusCode = 200;
-            res.send({
-                resp
-            });
-        })
-        .catch(fail => {
-            res.statusCode = 400;
-            res.send({
-                resp: fail
-            });
-        })
-})
+  TalentAccDetailsModel.findOneAndUpdate(
+    { userid: currentUser },
+    { $addToSet: { followers: followerId } }
+  )
+    .then((resp) => {
+      res.statusCode = 200;
+      res.send({
+        resp,
+      });
+    })
+    .catch((fail) => {
+      res.statusCode = 400;
+      res.send({
+        resp: fail,
+      });
+    });
+});
 
 app.patch("/update-favourites", async (req, res) => {
-    const favouriteId = req.body.favouriteid; // talent id
-    const currentUser = req.query.id; // client id
+  const favouriteId = req.body.favouriteid; // talent id
+  const currentUser = req.query.id; // client id
 
-    ClientAccDetailsModel
-        .findOneAndUpdate({ userid: currentUser }, { $addToSet: { favourites: favouriteId } })
-        .then(resp => {
-            res.statusCode = 200;
-            res.send({
-                resp
-            });
-        })
-        .catch(fail => {
-            res.statusCode = 400;
-            res.send({
-                resp: fail
-            });
-        })
-})
+  ClientAccDetailsModel.findOneAndUpdate(
+    { userid: currentUser },
+    { $addToSet: { favourites: favouriteId } }
+  )
+    .then((resp) => {
+      res.statusCode = 200;
+      res.send({
+        resp,
+      });
+    })
+    .catch((fail) => {
+      res.statusCode = 400;
+      res.send({
+        resp: fail,
+      });
+    });
+});
 
 app.use((req, res) => {
   console.info("Got hit here!!");
