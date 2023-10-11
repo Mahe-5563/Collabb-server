@@ -58,7 +58,7 @@ exports.getTalentsList = async function (filters, resp) {
                 total_records: (await UserDetailsModel.find({ usertype: "talent" })).length
             });
         } else {
-            resp.statusCode = 404;
+            resp.statusCode = 200;
             resp.send({
                 res: usersArr,
                 size: usersArr.length,
