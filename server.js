@@ -19,7 +19,7 @@ const {
   getTalentApplications,
 } = require("./processes/talent_functions");
 const JobPostModel = require("./models/clients/create-job-post");
-const { getClientJobPosts } = require("./processes/client_functions");
+const { getClientJobPosts, getTalentsList } = require("./processes/client_functions");
 const TalentAccDetailsModel = require("./models/talents/talents");
 const ClientAccDetailsModel = require("./models/clients/clients");
 
@@ -105,6 +105,11 @@ app.get("/get-client-job-posts", (req, res) => {
   const userid = req.query.userid;
   getClientJobPosts(userid, res);
 });
+
+app.get("/get-talents", (req, res) => {
+    const filters = req.query;
+    getTalentsList(filters, res);
+})
 
 // POST METHODS...
 app.post("/create-account", async (req, res) => {
