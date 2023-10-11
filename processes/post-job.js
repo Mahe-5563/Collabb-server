@@ -47,6 +47,7 @@ exports.processCreateJobPost = function (jobDetails, resp) {
         job_category: category,
         job_subcategory: subcategory,
         applicants: [],
+        job_status: "justnow", // working // completed
       })
         .save()
         .then(res => {

@@ -19,6 +19,7 @@ const JobPostSchema = new Schema({
     job_category: { type: Object, required: true },
     job_subcategory: { type: Object, required: true },
     applicants: { type: Array, required: true },
+    job_status: { type: String, required: true },
 }, { timestamps: true });
 
 const JobPostModel = Mongoose.model("JobPostModel", JobPostSchema);

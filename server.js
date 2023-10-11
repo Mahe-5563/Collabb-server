@@ -254,7 +254,7 @@ app.patch("/apply-for-job", async (req, res) => {
   }
 });
 
-app.patch("/update-job-status", async (req, res) => {
+app.patch("/update-applicant-status", async (req, res) => {
   const jobStatus = req.body.status;
   const jobApplicantId = req.body.applicant;
   const jobPostId = req.query.id;
@@ -268,6 +268,7 @@ app.patch("/update-job-status", async (req, res) => {
             $set: {
               "applicants.$.status": jobStatus,
               "applicants.$.lastUpdated": +new Date(),
+              job_status: jobStatus == "Accept" ? "working" : resp.job_status
             },
           }
         )
@@ -367,6 +368,28 @@ app.patch("/update-favourites", async (req, res) => {
       });
     });
 });
+
+app.patch("/update-job-status", async(req, res) => {
+    const jobStatus = req.body.job_status; // job status
+    const jobPostId = req.query.id; // job post id
+
+    JobPostModel.updateOne(
+        { _id: jobPostId },
+        { $set: { job_status: jobStatus } }
+    ).then(resp => {
+        res.statusCode = 200;
+        res.send({
+            res: resp,
+            message: `Status updated successfully!`,
+        });
+    }).catch(fail => {
+        res.statusCode = 400;
+        res.send({
+            res: fail,
+            message: `Error in updating job status!`,
+        });
+    })
+})
 
 app.use((req, res) => {
   console.info("Got hit here!!");
