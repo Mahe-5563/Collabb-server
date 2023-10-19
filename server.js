@@ -22,6 +22,7 @@ const JobPostModel = require("./models/clients/create-job-post");
 const { getClientJobPosts, getTalentsList } = require("./processes/client_functions");
 const TalentAccDetailsModel = require("./models/talents/talents");
 const ClientAccDetailsModel = require("./models/clients/clients");
+const { postNewMessage } = require("./processes/messaging");
 
 // app listener
 const port_number = 3001;
@@ -32,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Connect to mongo db
-const dbURI = `mongodb+srv://mahe:dbMahe7@cluster0.ndgc2tv.mongodb.net/db_collabb?retryWrites=true&w=majority`;
+const dbURI = `mongodb+srv://mahe:bQV11J0MxQW0W4Bx@cluster0.ndgc2tv.mongodb.net/db_collabb?retryWrites=true&w=majority`;
 mongoose
   .connect(dbURI)
   .then((response) => {
@@ -143,6 +144,11 @@ app.post("/get-all-users", async (req, res) => {
     });
   }
 });
+
+app.post("/create-new-message", async(req, res) => {
+  const messageThread = req.body;
+  postNewMessage(messageThread, res);
+})
 
 // PATCH METHODS...
 app.patch("/update-job-post", async (req, res) => {
