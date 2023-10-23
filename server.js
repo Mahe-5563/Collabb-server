@@ -113,6 +113,21 @@ app.get("/get-talents", (req, res) => {
     getTalentsList(filters, res);
 })
 
+app.get("/get-users-messages", (req, res) => {
+  const userid = req.body.userid;
+
+  MessagesModel.find({
+    $or: [
+      { clientid: userid },
+      { talentid: userid },
+    ]
+  }).then(resp => {
+    console.info("resp: ", resp);
+  }).catch(fail => {
+    console.info("fail: ", fail);
+  })
+})
+
 // POST METHODS...
 app.post("/create-account", async (req, res) => {
   const userDetail = req.body;
