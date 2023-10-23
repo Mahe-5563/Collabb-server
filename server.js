@@ -122,9 +122,17 @@ app.get("/get-users-messages", (req, res) => {
       { talentid: userid },
     ]
   }).then(resp => {
-    console.info("resp: ", resp);
+    res.send({
+      res: resp,
+      message: "Fetched user messages."
+    })
+    // console.info("resp: ", resp);
   }).catch(fail => {
-    console.info("fail: ", fail);
+    res.send({
+      res: fail,
+      message: "Failed to fetch user messages."
+    })
+    // console.info("fail: ", fail);
   })
 })
 
