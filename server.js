@@ -22,7 +22,8 @@ const JobPostModel = require("./models/clients/create-job-post");
 const { getClientJobPosts, getTalentsList } = require("./processes/client_functions");
 const TalentAccDetailsModel = require("./models/talents/talents");
 const ClientAccDetailsModel = require("./models/clients/clients");
-const { postNewMessage } = require("./processes/messaging");
+const { postNewMessage, appendMessage } = require("./processes/messaging");
+const MessagesModel = require("./models/messages");
 
 // app listener
 const port_number = 3001;
@@ -147,7 +148,13 @@ app.post("/get-all-users", async (req, res) => {
 
 app.post("/create-new-message", async(req, res) => {
   const messageThread = req.body;
-  postNewMessage(messageThread, res);
+  const { clientid, talentid } = messageThread;
+  const isThreadExists = MessagesModel.find({ clientid, talentid });
+  if((await isThreadExists).length > 0) {
+    appendMessage(messageThread, res);
+  } else {
+    postNewMessage(messageThread, res);
+  }
 })
 
 // PATCH METHODS...

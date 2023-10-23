@@ -18,6 +18,10 @@ const MessagesSchema = new Schema({
     messages: {
         type: Array,
         required: true,
+    },
+    lastupdated: {
+        type: Date,
+        required: true,
     }
 });
 

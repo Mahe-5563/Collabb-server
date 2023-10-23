@@ -28,20 +28,24 @@ exports.postNewMessage = (messageThread, res) => {
             attachments,
             fromreci,
             toreci,
+            opened: false,
           },
         ],
+        lastupdated: +new Date(),
       })
         .save()
         .then((resSave) => {
           // console.info("Response: ", resSave);
           res.send({
             res: resSave,
+            message: "Message sent successfully!"
           });
         })
         .catch((failSave) => {
           res.statuscode = 400;
           res.send({
             res: failSave,
+            message: "Message send failed!"
           });
         });
     } else {
@@ -51,3 +55,46 @@ exports.postNewMessage = (messageThread, res) => {
     }
   });
 };
+
+
+exports.appendMessage = (messageThread, res) => {
+    const {
+        clientid,
+        talentid,
+        messageid,
+        messagecontent,
+        attachments,
+        fromreci,
+        toreci,
+        // threadtitle,
+    } = messageThread;
+
+    MessagingModel.updateOne(
+        { clientid, talentid },
+        { 
+            $push: { 
+                messages: {
+                    messageid,
+                    messagecontent,
+                    attachments,
+                    fromreci,
+                    toreci,
+                    opened: false,
+                },
+            },
+            $set: {
+                lastupdated: +new Date(),
+            }
+        }
+    ).then(resp => {
+        res.send({
+            res: resp,
+            message: "Message appended successfully!"
+        })
+    }).catch(fail => {
+        res.send({
+            res: fail,
+            message: "Message append failed!"
+        });
+    })
+}
