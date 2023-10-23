@@ -114,7 +114,7 @@ app.get("/get-talents", (req, res) => {
 })
 
 app.get("/get-users-messages", (req, res) => {
-  const userid = req.body.userid;
+  const userid = req.query.userid;
 
   MessagesModel.find({
     $or: [
