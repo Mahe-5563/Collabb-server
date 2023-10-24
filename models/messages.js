@@ -22,6 +22,10 @@ const MessagesSchema = new Schema({
     lastupdated: {
         type: Date,
         required: true,
+    },
+    opened: {
+        type: Boolean,
+        required: true,
     }
 });
 

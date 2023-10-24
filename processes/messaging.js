@@ -28,9 +28,9 @@ exports.postNewMessage = (messageThread, res) => {
             attachments,
             fromreci,
             toreci,
-            opened: false,
           },
         ],
+        opened: false,
         lastupdated: +new Date(),
       })
         .save()
@@ -79,11 +79,11 @@ exports.appendMessage = (messageThread, res) => {
                     attachments,
                     fromreci,
                     toreci,
-                    opened: false,
                 },
             },
             $set: {
                 lastupdated: +new Date(),
+                opened: false,
             }
         }
     ).then(resp => {

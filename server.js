@@ -431,6 +431,31 @@ app.patch("/update-job-status", async(req, res) => {
     })
 })
 
+app.patch("/update-thread-status", async (req, res) => {
+  const status = req.body.status;
+  const threadtitle = req.body.threadtitle;
+
+  MessagesModel.updateOne(
+    { threadtitle },
+    { 
+      $set: {
+        lastupdated: +new Date(),
+        opened: status,
+      }
+    }
+).then(resp => {
+    res.send({
+        res: resp,
+        message: "Message appended successfully!"
+    })
+}).catch(fail => {
+    res.send({
+        res: fail,
+        message: "Message append failed!"
+    });
+})
+})
+
 app.use((req, res) => {
   console.info("Got hit here!!");
   res.send({ status: "404", message: "Not Found" });
