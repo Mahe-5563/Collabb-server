@@ -135,6 +135,50 @@ app.get("/get-users-messages", (req, res) => {
   })
 })
 
+app.get("/login-user", (req, res) => {
+  const email = req.query.email;
+  const pwd = req.query.pwd;
+  if(email && pwd) {
+    UserDetailsModel.findOne({
+      email: email.toLowerCase(),
+    })
+      .then((result) => {
+        if(!result) {
+          let respObj = {
+            message: "User does not exists",
+            statuscode: 400,
+            res: result,
+          };
+          res.send(respObj);
+        } else {
+          if(pwd == result.password) {
+            let respObj = {
+              message: "Successfully Logged in!",
+              statuscode: 200,
+              res: result,
+            };
+            res.send(respObj);
+          } else {
+            let respObj = {
+              message: "Incorrect password",
+              statuscode: 404,
+              res: result,
+            };
+            res.send(respObj);
+          }
+        }
+      })
+      .catch((fail) => {
+        res.send({ res: fail, message: "Something has gone wrong!" });
+      });
+  } else {
+    res.send({ 
+      message: "Email and Password are both required!",
+      status: 400,
+    });
+  }
+})
+
 // POST METHODS...
 app.post("/create-account", async (req, res) => {
   const userDetail = req.body;

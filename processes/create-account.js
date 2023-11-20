@@ -48,7 +48,7 @@ exports.processCreateAccount = async function (userDetail, resp) {
         const userDetails = new UserDetailsModel({
           firstName: userDetail.field_first_name,
           lastName: userDetail.field_last_name,
-          email: userDetail.field_email,
+          email: userDetail.field_email.toLowerCase(),
           password: userDetail.field_pwd,
           profileUri: userDetail.profile_photo.uri,
           usertype,
