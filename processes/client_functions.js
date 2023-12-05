@@ -24,7 +24,7 @@ exports.getClientJobPosts = function (userid, resp) {
 exports.getTalentsList = async function (filters, resp) {
     const { pageno = 1, name, categoryid } = filters;
     const pageSize = 10;
-    const skipCount = (pageno - 1) * pageSize;
+    const skipCount = pageno != 1 ? (pageno - 1) * pageSize : pageno * pageSize;
     UserDetailsModel
     .find({ 
         usertype: "talent",
