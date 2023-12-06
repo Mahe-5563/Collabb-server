@@ -24,7 +24,14 @@ exports.getClientJobPosts = function (userid, resp) {
 exports.getTalentsList = async function (filters, resp) {
     const { pageno = 1, name, categoryid } = filters;
     const pageSize = 10;
-    const skipCount = pageno != 1 ? (pageno - 1) * pageSize : pageno * pageSize;
+    let skipCount;
+
+    if(pageno < 1) {
+        skipCount = pageSize;
+    } else {
+        skipCount = (pageno - 1) * pageSize;
+    }
+    
     UserDetailsModel
     .find({ 
         usertype: "talent",
@@ -44,7 +51,7 @@ exports.getTalentsList = async function (filters, resp) {
         let usersArr = [];
         for (const talent of res) {
             const catTal = await TalentAccDetailsModel.findOne({ userid: talent._id, ...categoryid && {categoryid} })
-            console.info(catTal);
+            // console.info(catTal);
             if(catTal)
                 usersArr.push({ userDetail: talent, profileDetail: catTal });
         }
