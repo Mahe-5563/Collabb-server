@@ -32,37 +32,41 @@ exports.getTalentsList = async function (filters, resp) {
         skipCount = (pageno - 1) * pageSize;
     }
     
-    UserDetailsModel
-    .find({ 
-        usertype: "talent",
-        ...name && {
-            "$expr": {
-                "$regexMatch": {
-                    "input": { "$concat": ["$firstName", " ", "$lastName"] },
-                    "regex": name,
-                    "options": "i"
-                }
-            }
-        }
+    TalentAccDetailsModel
+    .find({
+        ...categoryid && {categoryid}
     })
     .limit(pageSize)
     .skip(skipCount)
     .then(async res => {
         let usersArr = [];
-        for (const talent of res) {
-            const catTal = await TalentAccDetailsModel.findOne({ userid: talent._id, ...categoryid && {categoryid} })
-            // console.info(catTal);
-            if(catTal)
-                usersArr.push({ userDetail: talent, profileDetail: catTal });
-        }
 
+        for(const user of res) {
+            const tal = await 
+                UserDetailsModel.findOne({ 
+                    _id: user.userid, 
+                    usertype: "talent",
+                    ...name && {
+                        "$expr": {
+                            "$regexMatch": {
+                                "input": { "$concat": ["$firstName", " ", "$lastName"] },
+                                "regex": name,
+                                "options": "i"
+                            }
+                        }
+                    }
+                })
+            if(tal){
+                usersArr.push({ profileDetail: user, userDetail: tal });
+            }
+        }
         if(usersArr.length > 0) {
             resp.statusCode = 200;
             resp.send({
                 res: usersArr,
                 message: "Fetched details!",
                 size: usersArr.length,
-                total_records: (await UserDetailsModel.find({ usertype: "talent" })).length
+                total_records: (await TalentAccDetailsModel.find({...categoryid && {categoryid}})).length
             });
         } else {
             resp.statusCode = 200;
@@ -73,15 +77,4 @@ exports.getTalentsList = async function (filters, resp) {
             });
         }
     })
-    // db.InspirationalWomen.find({first_name: { $regex: /Harriet/i} })
-    /* TalentAccDetailsModel
-    .find()
-    .limit(10)
-    .skip(skipCount)
-    .then(res => {
-        console.info(res);
-        resp.send({
-            res
-        })
-    }) */
 }
